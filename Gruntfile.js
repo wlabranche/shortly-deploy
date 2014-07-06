@@ -8,8 +8,11 @@ module.exports = function(grunt) {
       },
       dist: {
         src: [
-          'public/client/**/*.js',
-          'public/lib/**/*.js',
+          'public/lib/underscore.js',
+          'public/lib/jquery.js',
+          'public/lib/handlebars.js',
+          'public/lib/backbone.js',
+          'public/client/**/*.js'
         ],
         dest: 'public/dist/app.js'
       }
@@ -31,6 +34,11 @@ module.exports = function(grunt) {
     },
 
     uglify: {
+      options: {
+        mangle: {
+          except: []
+        }
+      },
       dist: {
         files: {
           'public/dist/app.min.js' : ['public/dist/app.js']
@@ -44,7 +52,6 @@ module.exports = function(grunt) {
         'public/lib/**/*.js',
       ],
       options: {
-        force: 'false',
         jshintrc: '.jshintrc',
         ignores: [
           'public/lib/**/*.js'
@@ -67,9 +74,7 @@ module.exports = function(grunt) {
           'public/lib/**/*.js',
         ],
         tasks: [
-          'jshint',
-          'concat',
-          'uglify'
+          'build'
         ]
       },
       css: {
@@ -80,6 +85,7 @@ module.exports = function(grunt) {
 
     shell: {
       prodServer: {
+        command: 'git push azure master'
       }
     },
   });
@@ -113,13 +119,17 @@ module.exports = function(grunt) {
     'mochaTest'
   ]);
 
-  grunt.registerTask('build', [ 'jshint', 'concat', 'uglify', 'cssmin' ]);
+  grunt.registerTask('build', ['concat', 'uglify', 'cssmin' ]);
 
-
+  grunt.registerTask('fail', function(n){
+    grunt.task.run('jshint');
+    grunt.fail.warn('jshint');
+  });
 
   grunt.registerTask('upload', function(n) {
     if(grunt.option('prod')) {
       // add your production server task here
+      grunt.task.run([ 'deploy' ]);
     } else {
       grunt.task.run([ 'server-dev' ]);
     }
@@ -127,7 +137,8 @@ module.exports = function(grunt) {
 
   grunt.registerTask('deploy', [
     // add your deploy tasks here
+    'shell:prodServer'
   ]);
 
-  grunt.registerTask('default', ['server-dev']);
+  grunt.registerTask('default', ['fail','server-dev']);
 };

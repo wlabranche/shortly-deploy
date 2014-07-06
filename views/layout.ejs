@@ -5,12 +5,17 @@
     <title>Shortly</title>
 
     <link rel="stylesheet" href="/dist/style.min.css">
-    <script src="/dist/app.min.js"></script>
+    <script>
+      window.Templates = window.Templates || {};
+    </script>
+    <script src="/dist/app.js"></script>
 
   </head>
 
   <body>
     <h1>Shortly</h1>
+
     <%- body %>
+
   </body>
 </html>
